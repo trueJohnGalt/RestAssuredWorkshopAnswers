@@ -2,6 +2,8 @@ package exercises;
 
 import dataentities.Car;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
@@ -21,6 +23,7 @@ public class RestAssuredExercises6Test {
 			setBaseUri("http://localhost").
 			setPort(9876).
 			setContentType(ContentType.JSON).
+			addFilter(new RequestLoggingFilter(LogDetail.ALL)).
 			build();
 	}
 		
@@ -36,8 +39,8 @@ public class RestAssuredExercises6Test {
 		Car fordFocus = new Car("Ford", "Focus", 2012);
 
 		given().
-				body(fordFocus).
 				spec(requestSpec).
+				body(fordFocus).
 		when().
 				post("/car/postcar").
 		then().

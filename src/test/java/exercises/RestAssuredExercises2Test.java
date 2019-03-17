@@ -4,7 +4,8 @@ import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,7 +13,6 @@ import org.junit.runner.RunWith;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 
 @RunWith(DataProviderRunner.class)
 public class RestAssuredExercises2Test {
@@ -26,6 +26,7 @@ public class RestAssuredExercises2Test {
 			setBaseUri("http://localhost").
 			setPort(9876).
 			setBasePath("/api/f1").
+			addFilter(new ResponseLoggingFilter(LogDetail.ALL)).
 			build();
 	}
 	
@@ -72,7 +73,7 @@ public class RestAssuredExercises2Test {
 		when().
                 get("/circuits/{circuit}.json").
 		then().
-                assertThat().body("MRData.CircuitTable.Circuits.Location.country[0]", equalTo(country));
+                assertThat().body("MRData.CircuitTable.Circuits[0].Location.country", equalTo(country));
 	}
 	
 	/*******************************************************
@@ -92,6 +93,6 @@ public class RestAssuredExercises2Test {
                 get("/2015/{race}/drivers/max_verstappen/pitstops.json").
 		then().
                 assertThat().
-                body("MRData.total[0]", equalTo(amount));
+                body("MRData.total", equalTo(amount));
 	}
 }

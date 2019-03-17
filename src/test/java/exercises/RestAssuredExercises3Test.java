@@ -2,8 +2,9 @@ package exercises;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.junit.BeforeClass;
@@ -15,13 +16,24 @@ import static org.hamcrest.Matchers.equalTo;
 public class RestAssuredExercises3Test {
 
 	private static RequestSpecification requestSpec;
+	private static ResponseSpecification responseSpec;
+	private static String ninthDriverId;
+
 
 	@BeforeClass
+	public static void setup() {
+		createRequestSpecification();
+		createResponseSpecification();
+		getNinthDriverId();
+	}
+
+
 	public static void createRequestSpecification() {
 
 		requestSpec = new RequestSpecBuilder().
 			setBaseUri("http://localhost").
 			setPort(9876).
+			addFilter(new ResponseLoggingFilter(LogDetail.ALL)).
 			setBasePath("/api/f1").
 			build();
 	}
@@ -34,9 +46,7 @@ public class RestAssuredExercises3Test {
 	 *   is equal to 'Albert Park Grand Prix Circuit'
 	 ******************************************************/
 	
-	private static ResponseSpecification responseSpec;
-	
-	@BeforeClass
+
 	public static void createResponseSpecification() {
 		responseSpec = new ResponseSpecBuilder().
                 expectStatusCode(200).
@@ -52,9 +62,7 @@ public class RestAssuredExercises3Test {
 	 * Use /2016/drivers.json
 	 ******************************************************/
 	
-	private static String ninthDriverId;
 
-	@BeforeClass
 	public static void getNinthDriverId() {
         ninthDriverId = given().
                             spec(requestSpec).
